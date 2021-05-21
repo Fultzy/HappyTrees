@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Node
   attr_reader :data
   attr_accessor :left_child, :right_child
@@ -22,10 +24,10 @@ class Node
   end
 
   def to_i
-    return @data.to_i
+    @data.to_i
   end
 
   def to_s
-    return @data.to_s
+    @data.to_s
   end
 end

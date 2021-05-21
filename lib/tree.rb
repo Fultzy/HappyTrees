@@ -1,7 +1,10 @@
+# frozen_string_literal: true
+
 require_relative 'node'
 
 class Tree
   attr_reader :root, :height, :depth
+
   attr_accessor
 
   def initialize(array)
@@ -11,18 +14,19 @@ class Tree
     balanced?
     @height = height
     puts ' New Tree Created :)'
-    end
+  end
 
   ########
   def build_tree(array)
     return nil if array.empty?
+
     root = Node.new(array[array.size / 2])
     root.left_child = build_tree(array[0...array.size / 2])
     root.right_child = build_tree(array[(array.size / 2 + 1)..-1])
     @root = root
   end
 
-  def height(node = @root, val = 0 )
+  def height(node = @root, val = 0)
     @val = val
     unless node.nil?
       @val += 1
@@ -32,7 +36,7 @@ class Tree
         height(node.left_child, @val)
       end
     end
-    return @val
+    @val
   end
 
   ########
@@ -41,7 +45,7 @@ class Tree
     if node.nil?
       puts "#{value} does not exist"
     elsif node.data == value
-      return node
+      node
     elsif node.to_i > value
       find(value, node.left_child)
     elsif node.to_i < value
@@ -80,45 +84,38 @@ class Tree
     end
   end
 
-  def delete(data)
-    node = find(data)
-
-
-  end
-
   ########
-  def level_order(array = Array.new, node = @root)
-    array.push(node.data) unless node.nil? || node == @root
-    left = level_order(array, node.left_child) unless node.left_child.nil?
-    right = level_order(array, node.right_child) unless node.right_child.nil?
+  def level_order(node = @root, queue = [], array = [])
+    array.push(node.data) unless node.nil?
+    queue.push(node.left_child) unless node.left_child.nil?
+    queue.push(node.right_child) unless node.right_child.nil?
+    return if queue.empty?
 
-    return array
+    level_order(queue.shift, queue, array)
+    array
   end
 
-
-
-  def preorder(array = Array.new, node = @root)
+  def preorder(array = [], node = @root)
     array.push(node.data) unless node.nil?
-
     preorder(array, node.left_child) unless node.left_child.nil?
     preorder(array, node.right_child) unless node.right_child.nil?
-    return array
-
+    array
   end
 
-  def inorder(array = Array.new, node = @root)
-    array.push(node.data) unless node.nil? || node == @root
-    array.push(inorder(array, node.right_child)) unless node.left_child.nil?
-    array.push(@root.data)
-    array.push(inorder(array, node.left_child)) unless node.left_child.nil?
+  def inorder(array = [], node = @root)
+    return nil if node.nil?
 
-
+    inorder(array, node.left_child)
+    array.push(node.data)
+    inorder(array, node.right_child)
+    array
   end
 
-  # array.include?(@root.data) ? nil : array.push(@root.data)
-
-  def postorder(array = Array.new, node = @root)
-
+  def postorder(array = [], node = @root)
+    array.unshift(node.data) unless node.nil?
+    postorder(array, node.right_child) unless node.right_child.nil?
+    postorder(array, node.left_child) unless node.left_child.nil?
+    array
   end
 
   ########
@@ -128,5 +125,4 @@ class Tree
     puts "#{prefix}#{is_left ? '└── ' : '┌── '}#{node.data}"
     pretty_print(node.left_child, "#{prefix}#{is_left ? '    ' : '│   '}", true) if node.left_child
   end
-
 end
